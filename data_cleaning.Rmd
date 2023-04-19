@@ -90,14 +90,7 @@ data2 <- cbind(data2, encoded_neighborhood)
 data2 <- data2[ , !(names(data2) %in% "neighbourhood_group_cleansed")]
 
 # turn NAs into 0
-data2$review_scores_rating[is.na(data2$review_scores_rating)] <- 0
-data2$reviews_per_month[is.na(data2$reviews_per_month)] <- 0
-data2$host_response_time[is.na(data2$host_response_time)] <- 0
-data2$host_response_rate[is.na(data2$host_response_rate)] <- 0
-data2$host_acceptance_rate[is.na(data2$host_acceptance_rate)] <- 0
-data2$host_listings_count[is.na(data2$host_listings_count)] <- 0
-data2$bathrooms_text[is.na(data2$bathrooms_text)] <- 0
-
+data2 <- replace(data2, is.na(data2), 0)
 ```
 
 ```{r}
