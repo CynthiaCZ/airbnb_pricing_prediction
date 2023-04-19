@@ -56,5 +56,17 @@ GGally::ggcorr(data2, method = c("pairwise.complete.obs", "pearson"),
 # turn NA reviews to 0
 data2$review_scores_rating[is.na(data2$review_scores_rating)] <- 0
 data2$reviews_per_month[is.na(data2$reviews_per_month)] <- 0
+data2$host_response_rate=as.numeric(gsub('[%]','',data2$host_response_rate))/100
+data2$host_acceptance_rate=as.numeric(gsub('[%]','',data2$host_acceptance_rate))/100
+data2$price=as.numeric(gsub('[$,]', '',data2$price))
+data2$host_is_superhost <- ifelse(data$host_is_superhost == "t", 1, 0)
+data2$host_has_profile_pic <- ifelse(data$host_has_profile_pic == "t", 1, 0)
+data2$host_identity_verified <- ifelse(data$host_identity_verified == "t", 1, 0)
+data2$instant_bookable <- ifelse(data$instant_bookable == "t", 1, 0)
+
+data2$bathrooms_text=gsub('half','0.5',data2$bathrooms_text)
+data2$bathrooms_text=gsub('Half','0.5',data2$bathrooms_text)
+data2$bathrooms_text=str_replace_all(data2$bathrooms_text,'[a-zA-Z ]',replacement='')
+data2$bathrooms_text=as.numeric(str_replace_all(data2$bathrooms_text,'-',replacement=''))
 ```
 
