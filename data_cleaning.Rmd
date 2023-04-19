@@ -56,17 +56,41 @@ GGally::ggcorr(data2, method = c("pairwise.complete.obs", "pearson"),
 # turn NA reviews to 0
 data2$review_scores_rating[is.na(data2$review_scores_rating)] <- 0
 data2$reviews_per_month[is.na(data2$reviews_per_month)] <- 0
+
+# remove signs and text
 data2$host_response_rate=as.numeric(gsub('[%]','',data2$host_response_rate))/100
 data2$host_acceptance_rate=as.numeric(gsub('[%]','',data2$host_acceptance_rate))/100
-data2$price=as.numeric(gsub('[$,]', '',data2$price))
-data2$host_is_superhost <- ifelse(data$host_is_superhost == "t", 1, 0)
-data2$host_has_profile_pic <- ifelse(data$host_has_profile_pic == "t", 1, 0)
-data2$host_identity_verified <- ifelse(data$host_identity_verified == "t", 1, 0)
-data2$instant_bookable <- ifelse(data$instant_bookable == "t", 1, 0)
 
+data2$price=as.numeric(gsub('[$,]', '',data2$price))
+
+data2$host_is_superhost <- ifelse(data2$host_is_superhost == "t", 1, 0)
+data2$host_has_profile_pic <- ifelse(data2$host_has_profile_pic == "t", 1, 0)
+data2$host_identity_verified <- ifelse(data2$host_identity_verified == "t", 1, 0)
+data2$instant_bookable <- ifelse(data2$instant_bookable == "t", 1, 0)
+
+# clean bathrooms column
 data2$bathrooms_text=gsub('half','0.5',data2$bathrooms_text)
 data2$bathrooms_text=gsub('Half','0.5',data2$bathrooms_text)
 data2$bathrooms_text=str_replace_all(data2$bathrooms_text,'[a-zA-Z ]',replacement='')
 data2$bathrooms_text=as.numeric(str_replace_all(data2$bathrooms_text,'-',replacement=''))
-```
 
+# ordinal encode response time
+# unique(data2$host_response_time)
+data2$host_response_time=gsub('a few days or more','1',data2$host_response_time)
+data2$host_response_time=gsub('within a day','2',data2$host_response_time)
+data2$host_response_time=gsub('within a few hours','3',data2$host_response_time)
+data2$host_response_time=gsub('within an hour','4',data2$host_response_time)
+data2$host_response_time=as.numeric(data2$host_response_time)
+
+data2$host_response_time[is.na(data2$host_response_time)] <- 0
+data2$host_response_rate[is.na(data2$host_response_rate)] <- 0
+data2$host_acceptance_rate[is.na(data2$host_acceptance_rate)] <- 0
+data2$host_listings_count[is.na(data2$host_listings_count)] <- 0
+data2$bathrooms_text[is.na(data2$bathrooms_text)] <- 0
+
+```
+```{r}
+missing <- is.na(data2)
+col_missing <- colSums(missing)
+col_missing
+```
