@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(dplyr)
 library(ggplot2)
+library(GGally)
 ```
 
 ```{r}
@@ -18,6 +19,42 @@ full_data <- read.csv(file='./data/listings.csv')
 ```
 
 ```{r}
-data <- full_data %>% dplyr::select(id, host_since, host_response_time, host_response_rate, host_acceptance_rate, host_is_superhost, host_listings_count, host_has_profile_pic, host_identity_verified, neighbourhood_cleansed, neighbourhood_group_cleansed, latitude, longitude, room_type, accommodates, bathrooms_text, bedrooms, beds, price, minimum_nights, availability_365, review_scores_rating, review_scores_accuracy, review_scores_cleanliness, review_scores_checkin, review_scores_communication, review_scores_location, review_scores_value, instant_bookable, reviews_per_month)
+data1 <- full_data %>% dplyr::select(host_since, host_response_time, host_response_rate, host_acceptance_rate, host_is_superhost, host_listings_count, host_has_profile_pic, host_identity_verified, neighbourhood_cleansed, neighbourhood_group_cleansed, latitude, longitude, room_type, accommodates, bathrooms_text, bedrooms, beds, price, minimum_nights, availability_365, review_scores_rating, review_scores_accuracy, review_scores_cleanliness, review_scores_checkin, review_scores_communication, review_scores_location, review_scores_value, instant_bookable, reviews_per_month)
+```
+
+```{r}
+# check correlation
+GGally::ggcorr(data1, method = c("pairwise.complete.obs", "pearson"),
+  digits = 1, 
+  palette = "RdGy",
+  label = TRUE, label_alpha = TRUE,
+  size = 3, hjust = 0.9, layout.exp = 1) +
+  ggtitle("Correlation")
+```
+```{r}
+missing <- is.na(data1)
+col_missing <- colSums(missing)
+col_missing
+```
+
+
+```{r}
+# removed correlated variables
+data2 <- full_data %>% dplyr::select(host_since, host_response_time, host_response_rate, host_acceptance_rate, host_is_superhost, host_listings_count, host_has_profile_pic, host_identity_verified, neighbourhood_cleansed, neighbourhood_group_cleansed, latitude, longitude, room_type, bathrooms_text, accommodates, price, minimum_nights, availability_365, review_scores_rating, instant_bookable, reviews_per_month)
+```
+
+```{r}
+# check correlation
+GGally::ggcorr(data2, method = c("pairwise.complete.obs", "pearson"),
+  digits = 1, 
+  palette = "RdGy",
+  label = TRUE, label_alpha = TRUE,
+  size = 3, hjust = 0.9, layout.exp = 1) +
+  ggtitle("Correlation")
+```
+```{r}
+# turn NA reviews to 0
+data2$review_scores_rating[is.na(data2$review_scores_rating)] <- 0
+data2$reviews_per_month[is.na(data2$reviews_per_month)] <- 0
 ```
 
