@@ -114,8 +114,9 @@ col_missing
 
 ```{r}
 write.csv(data2, file='./data/listings_EDA.csv', row.names = FALSE)
-data2 <- data2[ , !(names(data2) %in% "neighbourhood_group_cleansed")]
-data2 <- data2[ , !(names(data2) %in% "price")]
+data2 <- data2[ , !(names(data2) %in% c("neighbourhood_group_cleansed", "price", "latitude", "longitude"))]
+
+
 write.csv(data2, file='./data/listings_clean.csv', row.names = FALSE)
 ```
 
