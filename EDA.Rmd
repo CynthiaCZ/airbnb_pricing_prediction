@@ -12,3 +12,17 @@ knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 library(ggplot2)
 ```
+
+```{r}
+data_EDA <- read.csv(file='./data/listings_EDA.csv')
+```
+
+```{r}
+ggplot(data=data_EDA, aes(neighbourhood_group_cleansed, price)) +
+  geom_boxplot() +
+  scale_y_log10() +
+  xlab("neighborhood") +
+  ylab("price") +
+  ggtitle("price in different neighborhood")
+```
+

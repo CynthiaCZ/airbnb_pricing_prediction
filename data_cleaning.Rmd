@@ -88,7 +88,7 @@ data2 <- data2[ , !(names(data2) %in% "room_type")]
 # one hot encode neighborhood group
 encoded_neighborhood <- dummyVars("~ neighbourhood_group_cleansed", data = data2) %>% predict(data2)
 data2 <- cbind(data2, encoded_neighborhood)
-data2 <- data2[ , !(names(data2) %in% "neighbourhood_group_cleansed")]
+# data2 <- data2[ , !(names(data2) %in% "neighbourhood_group_cleansed")]
 
 # turn NAs into 0
 data2 <- replace(data2, is.na(data2), 0)
@@ -111,6 +111,9 @@ data2$price_log <- log(data2$price)
 ```
 
 ```{r}
+write.csv(data2, file='./data/listings_EDA.csv')
+data2 <- data2[ , !(names(data2) %in% "neighbourhood_group_cleansed")]
+data2 <- data2[ , !(names(data2) %in% "price")]
 write.csv(data2, file='./data/listings_clean.csv')
 ```
 
