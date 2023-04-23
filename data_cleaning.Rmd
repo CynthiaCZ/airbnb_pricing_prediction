@@ -42,7 +42,7 @@ col_missing
 
 ```{r}
 # removed correlated variables
-data2 <- full_data %>% dplyr::select(host_since, host_response_time, host_response_rate, host_acceptance_rate, host_is_superhost, host_listings_count, host_has_profile_pic, host_identity_verified, neighbourhood_group_cleansed, latitude, longitude, room_type, bathrooms_text, accommodates, price, minimum_nights, availability_365, review_scores_rating, instant_bookable, reviews_per_month)
+data2 <- full_data %>% dplyr::select(host_since, host_response_time, host_is_superhost, host_listings_count, host_has_profile_pic, host_identity_verified, neighbourhood_group_cleansed, latitude, longitude, room_type, bathrooms_text, accommodates, price, minimum_nights, availability_365, review_scores_rating, instant_bookable, reviews_per_month)
 ```
 
 ```{r}
@@ -56,8 +56,8 @@ GGally::ggcorr(data2, method = c("pairwise.complete.obs", "pearson"),
 ```
 ```{r}
 # remove signs and text
-data2$host_response_rate=as.numeric(gsub('[%]','',data2$host_response_rate))/100
-data2$host_acceptance_rate=as.numeric(gsub('[%]','',data2$host_acceptance_rate))/100
+#data2$host_response_rate=as.numeric(gsub('[%]','',data2$host_response_rate))/100
+#data2$host_acceptance_rate=as.numeric(gsub('[%]','',data2$host_acceptance_rate))/100
 
 data2$price=as.numeric(gsub('[$,]', '',data2$price))
 
@@ -111,9 +111,9 @@ data2$price_log <- log(data2$price)
 ```
 
 ```{r}
-write.csv(data2, file='./data/listings_EDA.csv')
+write.csv(data2, file='./data/listings_EDA.csv', row.names = FALSE)
 data2 <- data2[ , !(names(data2) %in% "neighbourhood_group_cleansed")]
 data2 <- data2[ , !(names(data2) %in% "price")]
-write.csv(data2, file='./data/listings_clean.csv')
+write.csv(data2, file='./data/listings_clean.csv', row.names = FALSE)
 ```
 
