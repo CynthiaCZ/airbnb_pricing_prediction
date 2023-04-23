@@ -48,4 +48,19 @@ ggplot(data=data_EDA,aes(price))+
   theme_bw()+scale_x_log10()+
   labs(x='price (log scale)',y='count',title='NYC Airbnb price distribution')
 ```
+```{r}
+library(ggmap)
+library(sp)
+library(mapview)
+library(RColorBrewer)
+map_EDA=data.frame(price_level=cut(data_EDA$price_log, breaks=c(-Inf, 0.25*max(data_EDA$price_log), 0.5*max(data_EDA$price_log), 0.75*max(data_EDA$price_log), Inf), labels = c(1,2,3,4), right=FALSE))
+map_EDA$longitude = data_EDA$longitude
+map_EDA$latitude = data_EDA$latitude
+
+map_view=map_EDA
+coordinates(map_view)=~longitude+latitude
+proj4string(map_view)=CRS('+init=epsg:4326')
+pal = colorRampPalette(brewer.pal(9, "YlOrRd"))
+mapview(map_view,zcol='price_level', cex=2, alpha=0.5, col.regions=pal, color=NA)
+```
 
