@@ -22,17 +22,16 @@ data_clean <- read.csv(file='./data/listings_clean.csv')
 
 ```{r}
 # check correlation
-colors <- viridis::mako(3)
 GGally::ggcorr(data_clean, method = c("pairwise.complete.obs", "pearson"),
   digits = 1, 
-  low = colors[1], mid = colors[2], high = colors[3], 
-  label = TRUE, label_size = 2, label_color = "white",
+  low = '#800080', mid = '#FFC0CB', high = '#FFF8DC', 
+  label = TRUE, label_size = 2, label_color = "black",
   size = 2, hjust = 1, layout.exp = 3) +
   ggtitle("Correlation")
 ```
 
 ```{r}
-colors <- viridis::mako(5)
+colors <- c('#800080','#DDA0DD', '#FF9282', '#FFC0CB', '#FFF8DC')
 ggplot(data=data_EDA, aes(x=neighbourhood_group_cleansed, y=price, fill=neighbourhood_group_cleansed)) +
   geom_boxplot() +
   scale_y_log10() +
@@ -44,7 +43,7 @@ ggplot(data=data_EDA, aes(x=neighbourhood_group_cleansed, y=price, fill=neighbou
 ```
 ```{r}
 ggplot(data=data_EDA,aes(price))+
-  geom_histogram(bins=30, fill='#69b3a2',color='#e9ecef')+
+  geom_histogram(bins=30, fill='#FF9282',color='#e9ecef')+
   theme_bw()+scale_x_log10()+
   labs(x='price (log scale)',y='count',title='NYC Airbnb price distribution')
 ```
