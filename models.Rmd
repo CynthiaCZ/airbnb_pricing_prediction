@@ -23,7 +23,7 @@ data_scaled <- as.data.frame(scale(data_clean))
 
 ```{r}
 # train test split
-set.seed(6) 
+set.seed(0) 
 train_indices <- sample(1:nrow(data_scaled), 0.8 * nrow(data_scaled))
 train_data <- data_scaled[train_indices,]
 test_data <- data_scaled[-train_indices,]
@@ -114,6 +114,7 @@ results <- data.frame(
 print(results)
 ```
 ```{r}
+# full model
 full_coef_abs <- abs(coef(full_model)[-1]) # Remove intercept
 full_coef_importance <- data.frame(Feature = names(full_coef_abs), 
                                    Importance = full_coef_abs, row.names = NULL)
@@ -130,14 +131,16 @@ forward_coef_importance <- forward_coef_importance %>% arrange(desc(Importance))
 print(forward_coef_importance)
 ```
 ```{r}
-backward_coef_abs <- abs(coef(backward_model)[-1]) # Remove intercept
+# backward
+backward_coef_abs <- abs(coef(backward_model)[-1])
 backward_coef_importance <- data.frame(Feature = names(backward_coef_abs), 
                                        Importance = backward_coef_abs, row.names = NULL)
 backward_coef_importance <- backward_coef_importance %>% arrange(desc(Importance))
 print(backward_coef_importance)
 ```
 ```{r}
-lasso_coef_abs <- abs(coef(lasso_model)[-1]) # Remove intercept
+# lasso
+lasso_coef_abs <- abs(coef(lasso_model)[-1]) 
 lasso_importance <- data.frame(Feature = colnames(x_train), Importance = lasso_coef_abs,
                                row.names = NULL)
 lasso_importance <- lasso_importance %>% arrange(desc(Importance))
@@ -145,6 +148,7 @@ print(lasso_importance)
 ```
 
 ```{r}
+# Remove intercept
 ridge_coef_abs <- abs(coef(ridge_model)[-1]) # Remove intercept
 ridge_importance <- data.frame(Feature = colnames(x_train), Importance = ridge_coef_abs,
                                row.names = NULL)
