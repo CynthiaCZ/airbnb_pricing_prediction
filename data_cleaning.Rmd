@@ -13,6 +13,7 @@ library(dplyr)
 library(ggplot2)
 library(GGally)
 library(caret)
+library(stringr)
 ```
 
 ```{r}
@@ -108,5 +109,9 @@ data2 <- data2[data2$price != 0, ]
 # log transform price
 data2$price_log <- log(data2$price)
 data2 <- data2[ , !(names(data2) %in% "price")]
+```
+
+```{r}
+write.csv(data2, file='./data/listings_clean.csv')
 ```
 
