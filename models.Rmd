@@ -12,9 +12,14 @@ knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 library(ggplot2)
 library(GGally)
+library(lmerTest)
 ```
 
 ```{r}
 data_clean <- read.csv(file='./data/listings_clean.csv')
+```
+
+```{r}
+
 ```
 

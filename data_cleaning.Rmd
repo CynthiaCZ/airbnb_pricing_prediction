@@ -95,19 +95,21 @@ data2 <- replace(data2, is.na(data2), 0)
 ```
 
 ```{r}
-missing <- is.na(data2)
-col_missing <- colSums(missing)
-col_missing
-```
-
-```{r}
 # turn date into days
 data2$host_since=as.double(Sys.Date()-as.Date(data2$host_since))
+# omit na
+data2 <- na.omit(data2)
 
 # delete rows with price of zero
 data2 <- data2[data2$price != 0, ]
 # log transform price
 data2$price_log <- log(data2$price)
+```
+
+```{r}
+missing <- is.na(data2)
+col_missing <- colSums(missing)
+col_missing
 ```
 
 ```{r}
