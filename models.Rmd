@@ -114,25 +114,27 @@ results <- data.frame(
 print(results)
 ```
 ```{r}
-coef_abs <- abs(coef(full_model)[-1]) # Remove intercept
-coef_importance <- data.frame(Feature = names(coef_abs), Importance = coef_abs,
-                              row.names = NULL)
-coef_importance <- coef_importance %>% arrange(desc(Importance))
-print(coef_importance)
+full_coef_abs <- abs(coef(full_model)[-1]) # Remove intercept
+full_coef_importance <- data.frame(Feature = names(full_coef_abs), 
+                                   Importance = full_coef_abs, row.names = NULL)
+full_coef_importance <- full_coef_importance %>% arrange(desc(Importance))
+print(full_coef_importance)
 ```
 ```{r}
-coef_abs <- abs(coef(forward_model)[-1]) # Remove intercept
-coef_importance <- data.frame(Feature = names(coef_abs), Importance = coef_abs,
-                              row.names = NULL)
-coef_importance <- coef_importance %>% arrange(desc(Importance))
-print(coef_importance)
+# forward
+forward_coef_abs <- abs(coef(forward_model)[-1])
+forward_coef_importance <- data.frame(Feature = names(forward_coef_abs), 
+                                      Importance = forward_coef_abs,
+                                      row.names = NULL)
+forward_coef_importance <- forward_coef_importance %>% arrange(desc(Importance))
+print(forward_coef_importance)
 ```
 ```{r}
-coef_abs <- abs(coef(backward_model)[-1]) # Remove intercept
-coef_importance <- data.frame(Feature = names(coef_abs), Importance = coef_abs,
-                              row.names = NULL)
-coef_importance <- coef_importance %>% arrange(desc(Importance))
-print(coef_importance)
+backward_coef_abs <- abs(coef(backward_model)[-1]) # Remove intercept
+backward_coef_importance <- data.frame(Feature = names(backward_coef_abs), 
+                                       Importance = backward_coef_abs, row.names = NULL)
+backward_coef_importance <- backward_coef_importance %>% arrange(desc(Importance))
+print(backward_coef_importance)
 ```
 ```{r}
 lasso_coef_abs <- abs(coef(lasso_model)[-1]) # Remove intercept
