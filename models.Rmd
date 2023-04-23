@@ -18,14 +18,15 @@ library(glmnet)
 
 ```{r}
 data_clean <- read.csv(file='./data/listings_clean.csv')
+data_scaled <- as.data.frame(scale(data_clean))
 ```
 
 ```{r}
 # train test split
 set.seed(6) 
-train_indices <- sample(1:nrow(data_clean), 0.8 * nrow(data_clean))
-train_data <- data_clean[train_indices,]
-test_data <- data_clean[-train_indices,]
+train_indices <- sample(1:nrow(data_scaled), 0.8 * nrow(data_scaled))
+train_data <- data_scaled[train_indices,]
+test_data <- data_scaled[-train_indices,]
 ```
 
 ```{r}
@@ -111,5 +112,41 @@ results <- data.frame(
 )
 
 print(results)
+```
+```{r}
+coef_abs <- abs(coef(full_model)[-1]) # Remove intercept
+coef_importance <- data.frame(Feature = names(coef_abs), Importance = coef_abs,
+                              row.names = NULL)
+coef_importance <- coef_importance %>% arrange(desc(Importance))
+print(coef_importance)
+```
+```{r}
+coef_abs <- abs(coef(forward_model)[-1]) # Remove intercept
+coef_importance <- data.frame(Feature = names(coef_abs), Importance = coef_abs,
+                              row.names = NULL)
+coef_importance <- coef_importance %>% arrange(desc(Importance))
+print(coef_importance)
+```
+```{r}
+coef_abs <- abs(coef(backward_model)[-1]) # Remove intercept
+coef_importance <- data.frame(Feature = names(coef_abs), Importance = coef_abs,
+                              row.names = NULL)
+coef_importance <- coef_importance %>% arrange(desc(Importance))
+print(coef_importance)
+```
+```{r}
+lasso_coef_abs <- abs(coef(lasso_model)[-1]) # Remove intercept
+lasso_importance <- data.frame(Feature = colnames(x_train), Importance = lasso_coef_abs,
+                               row.names = NULL)
+lasso_importance <- lasso_importance %>% arrange(desc(Importance))
+print(lasso_importance)
+```
+
+```{r}
+ridge_coef_abs <- abs(coef(ridge_model)[-1]) # Remove intercept
+ridge_importance <- data.frame(Feature = colnames(x_train), Importance = ridge_coef_abs,
+                               row.names = NULL)
+ridge_importance <- ridge_importance %>% arrange(desc(Importance))
+print(ridge_importance)
 ```
 
