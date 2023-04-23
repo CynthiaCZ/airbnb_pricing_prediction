@@ -21,35 +21,95 @@ data_clean <- read.csv(file='./data/listings_clean.csv')
 ```
 
 ```{r}
-fit1 <- lm(price_log ~ ., data = data_clean)
-fit2 <- lm(price_log ~ 1, data = data_clean)
-model_forward <- step(fit2, direction = "forward", scope=list(upper=fit1, lower=fit2), trace=0)
-summary(model_forward)
+# train test split
+set.seed(6) 
+train_indices <- sample(1:nrow(data_clean), 0.8 * nrow(data_clean))
+train_data <- data_clean[train_indices,]
+test_data <- data_clean[-train_indices,]
+```
+
+```{r}
+full_model <- lm(price_log ~ ., data = train_data)
+```
+
+```{r}
+fit1 <- lm(price_log ~ ., data = train_data)
+fit2 <- lm(price_log ~ 1, data = train_data)
+forward_model <- step(fit2, direction = "forward", scope=list(upper=fit1, lower=fit2), trace=0)
+summary(forward_model)
 ```
 
 
 ```{r}
-model_back <- step(fit1, direction = "backward", trace=0)
-summary(model_back)
+backward_model <- step(fit1, direction = "backward", trace=0)
+summary(backward_model)
 ```
 
 ```{r}
+# lasso
 # lambda grid
-grid = 10^seq(1, -4, length = 100)
+grid = 10^seq(2, -4, length = 100)
 # split data
-set.seed(10)
-x <- as.matrix(data_clean[ , !(names(data_clean) %in% "price_log")])
-y <- data_clean$price_log %>% unlist()
-train_idx <- sample(1:nrow(x), nrow(x)/2) 
-x_train <- x[train_idx, ]
-y_train <- y[train_idx]
+x_train <- model.matrix(price_log ~ ., train_data)[,-1]  # removing the intercept
+y_train <- train_data$price_log
+x_test <- model.matrix(price_log ~ ., test_data)[,-1]
+y_test <- test_data$price_log
 
-# lasso train
-lasso_model <- cv.glmnet(x_train, y_train, alpha = 1, lambda = grid)
-bestlam <- lasso_model$lambda.min
-lasso_fit <- glmnet(x_train, y_train, alpha = 1, lambda = bestlam)
-# lasso fit on full data
-lasso_coef <- predict(lasso_fit, newx = x, type = "coefficients", s = bestlam)
-lasso_coef
+lasso_cv <- cv.glmnet(x_train, y_train, alpha = 1, lambda = grid)
+lasso_model <- glmnet(x_train, y_train, alpha = 1, lambda = lasso_cv$lambda.min)
+```
+
+```{r}
+# ridge
+ridge_cv <- cv.glmnet(x_train, y_train, alpha = 0, lambda = grid)
+ridge_model <- glmnet(x_train, y_train, alpha = 0, lambda = ridge_cv$lambda.min)
+```
+
+
+```{r}
+# RMSE
+rmse <- function(predicted, actual) {
+  sqrt(mean((predicted - actual)^2))
+}
+
+# R_squared
+r_squared <- function(predicted, actual) {
+  1 - (sum((actual - predicted)^2) / sum((actual - mean(actual))^2))
+}
+
+# Full model
+full_pred <- predict(full_model, test_data)
+full_rmse <- rmse(full_pred, test_data$price_log)
+full_r_squared <- r_squared(full_pred, test_data$price_log)
+
+# Forward selection
+forward_pred <- predict(forward_model, newdata = test_data)
+forward_rmse <- rmse(forward_pred, test_data$price_log)
+forward_r_squared <- r_squared(forward_pred, test_data$price_log)
+
+# Backward selection
+backward_pred <- predict(backward_model, newdata = test_data)
+backward_rmse <- rmse(backward_pred, test_data$price_log)
+backward_r_squared <- r_squared(backward_pred, test_data$price_log)
+
+
+# Lasso
+lasso_pred <- predict(lasso_model, s = lasso_cv$lambda.min, newx = x_test)
+lasso_rmse <- rmse(lasso_pred, y_test)
+lasso_r_squared <- r_squared(lasso_pred, y_test)
+
+# Ridge
+ridge_pred <- predict(ridge_model, s = ridge_cv$lambda.min, newx = x_test)
+ridge_rmse <- rmse(ridge_pred, y_test)
+ridge_r_squared <- r_squared(lasso_pred, y_test)
+```
+```{r}
+results <- data.frame(
+  Model = c("Full", "Forward", "Backward", "Lasso", "Ridge"),
+  RMSE = c(full_rmse, forward_rmse, backward_rmse, lasso_rmse, ridge_rmse),
+  R_squared = c(full_r_squared, forward_r_squared, backward_r_squared, lasso_r_squared, ridge_r_squared)
+)
+
+print(results)
 ```
 
