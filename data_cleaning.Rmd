@@ -108,7 +108,6 @@ data2$host_since=as.double(Sys.Date()-as.Date(data2$host_since))
 data2 <- data2[data2$price != 0, ]
 # log transform price
 data2$price_log <- log(data2$price)
-data2 <- data2[ , !(names(data2) %in% "price")]
 ```
 
 ```{r}
