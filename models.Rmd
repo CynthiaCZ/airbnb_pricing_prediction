@@ -13,6 +13,7 @@ library(dplyr)
 library(ggplot2)
 library(GGally)
 library(lmerTest)
+library(glmnet)
 ```
 
 ```{r}
@@ -20,6 +21,35 @@ data_clean <- read.csv(file='./data/listings_clean.csv')
 ```
 
 ```{r}
+fit1 <- lm(price_log ~ ., data = data_clean)
+fit2 <- lm(price_log ~ 1, data = data_clean)
+model_forward <- step(fit2, direction = "forward", scope=list(upper=fit1, lower=fit2), trace=0)
+summary(model_forward)
+```
 
+
+```{r}
+model_back <- step(fit1, direction = "backward", trace=0)
+summary(model_back)
+```
+
+```{r}
+# lambda grid
+grid = 10^seq(1, -4, length = 100)
+# split data
+set.seed(10)
+x <- as.matrix(data_clean[ , !(names(data_clean) %in% "price_log")])
+y <- data_clean$price_log %>% unlist()
+train_idx <- sample(1:nrow(x), nrow(x)/2) 
+x_train <- x[train_idx, ]
+y_train <- y[train_idx]
+
+# lasso train
+lasso_model <- cv.glmnet(x_train, y_train, alpha = 1, lambda = grid)
+bestlam <- lasso_model$lambda.min
+lasso_fit <- glmnet(x_train, y_train, alpha = 1, lambda = bestlam)
+# lasso fit on full data
+lasso_coef <- predict(lasso_fit, newx = x, type = "coefficients", s = bestlam)
+lasso_coef
 ```
 
