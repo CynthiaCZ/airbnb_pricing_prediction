@@ -187,3 +187,41 @@ ggplot(data=betas_long, aes(variable, value, fill=variable)) +
   ylab("Estimate") +
   ggtitle("Beta estimates from bootstrap")
 ```
+
+```{r}
+
+# Plot residuals vs fitted values
+plot(full_model$fitted.values, full_model$residuals, 
+     xlab = "Fitted values", ylab = "Residuals", 
+     main = "Residuals vs Fitted Values for Full Model",
+     col = "blue")
+# Add a horizontal line at zero
+abline(h = 0, col = "red")
+
+plot(full_model)
+
+```
+
+```{r}
+
+predictions <- data.frame(y_true = test_data$price_log, y_pred = predict(forward_model, newdata = test_data))
+
+library(ggplot2)
+
+ggplot(predictions, aes(x = y_true, y = y_pred)) +
+  geom_point() +
+  geom_abline(color = "#F08080", size = 1)
+
+# Plot predicted vs actual values with a regression line
+ggplot(predictions, aes(x = y_true, y = y_pred)) +
+  geom_point(color = "#FFC0CB") +
+  geom_abline(intercept = 0, slope = 1, color = "#FF69B4", linetype = "dashed") +
+  labs(x = "True Values", y = "Predicted Values") +
+  theme_minimal() +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour = "black"),
+        legend.position = "none",
+        text = element_text(size = 12, family = "Helvetica"))
+
+```
