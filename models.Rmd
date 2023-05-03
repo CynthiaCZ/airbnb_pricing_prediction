@@ -14,6 +14,7 @@ library(ggplot2)
 library(GGally)
 library(lmerTest)
 library(glmnet)
+library(tidyr)
 ```
 
 ```{r}
@@ -105,10 +106,22 @@ ridge_rmse <- rmse(ridge_pred, y_test)
 ridge_r_squared <- r_squared(lasso_pred, y_test)
 ```
 ```{r}
+# baselines
+target <- data_scaled$price_log
+mean_target <- mean(target)
+baseline <- rep(mean_target, length(target))
+baseline_rmse <- rmse(target, baseline)
+
+rss <- sum((baseline - target)^2)
+tss <- sum((target - mean(target))^2)
+baseline_rsq <- 1 - rss/tss
+```
+
+```{r}
 results <- data.frame(
-  Model = c("Full", "Forward", "Backward", "Lasso", "Ridge"),
-  RMSE = c(full_rmse, forward_rmse, backward_rmse, lasso_rmse, ridge_rmse),
-  R_squared = c(full_r_squared, forward_r_squared, backward_r_squared, lasso_r_squared, ridge_r_squared)
+  Model = c("Baseline","Full", "Forward", "Backward", "Lasso", "Ridge"),
+  RMSE = c(baseline_rmse, full_rmse, forward_rmse, backward_rmse, lasso_rmse, ridge_rmse),
+  R_squared = c(baseline_rsq, full_r_squared, forward_r_squared, backward_r_squared, lasso_r_squared, ridge_r_squared)
 )
 
 print(results)
@@ -183,8 +196,9 @@ ggplot(data=betas_long, aes(variable, value, fill=variable)) +
   geom_boxplot() +
   scale_fill_manual(values = c('#DDA0DD', '#FF9282', '#FFC0CB'), name="") +
   theme_bw() +
-  xlab("Beta") +
-  ylab("Estimate") +
+  theme(text = element_text(size = 13)) + theme(aspect.ratio=1/1.65) +
+  xlab("covariates") +
+  ylab("estimate") +
   ggtitle("Beta estimates from bootstrap")
 ```
 
@@ -214,14 +228,11 @@ ggplot(predictions, aes(x = y_true, y = y_pred)) +
 
 # Plot predicted vs actual values with a regression line
 ggplot(predictions, aes(x = y_true, y = y_pred)) +
-  geom_point(color = "#FFC0CB") +
+  geom_point(color = "#FFC0CB", alpha = 0.7) +
   geom_abline(intercept = 0, slope = 1, color = "#FF69B4", linetype = "dashed") +
-  labs(x = "True Values", y = "Predicted Values") +
-  theme_minimal() +
-  theme(panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        axis.line = element_line(colour = "black"),
-        legend.position = "none",
-        text = element_text(size = 12, family = "Helvetica"))
+  labs(x = "true values", y = "predicted values") +
+  ggtitle("True values vs prediction for forward model")+
+  theme_bw() +
+  theme(text = element_text(size = 13)) + theme(aspect.ratio=1/1.6) 
 
 ```
