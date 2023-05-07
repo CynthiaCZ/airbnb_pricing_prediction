@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 library(ggplot2)
 library(GGally)
+library(gridExtra)
 ```
 
 ```{r}
@@ -40,12 +41,12 @@ ggplot(summary_data, aes(x=reorder(room_type, -mean_price), y=mean_price, fill=r
 
 ```{r}
 # check correlation
-GGally::ggcorr(data_clean, method = c("pairwise.complete.obs", "pearson"),
+p<-GGally::ggcorr(data_clean, method = c("pairwise.complete.obs", "pearson"),
   digits = 1, 
   low = '#800080', mid = '#FFC0CB', high = '#FFF8DC', 
   label = TRUE, label_size = 2, label_color = "black",
-  size = 2.7, hjust = 1, layout.exp = 4) +
-  ggtitle("Correlation")
+  size = 2.7, hjust = 1, layout.exp = 4) 
+grid.arrange(p, bottom="Correlation plot of selected and processed features")
 ```
 
 ```{r}
