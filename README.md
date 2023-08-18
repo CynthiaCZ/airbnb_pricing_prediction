@@ -2,7 +2,8 @@
 This study utilizes various data analysis and machine learning algorithms to build a predictive model that can estimate the price of an Airbnb listing based on various factors such as location, number of bedrooms, amenities, and reviews.
 
 ## Tools used
-R, RStudio\
+R \
+RStudio \
 various R packages
 
 ## Files and Folders
@@ -13,7 +14,7 @@ various R packages
 ├──── EDA.Rmd: exploratory data analysis\
 ├──── models.Rmd: linear models\
 ├──── multilevel.Rmd: multilevel models\
-├── poster.pdf: presentation poster
+├── poster.pdf: presentation poster\
 ├── .gitignore\
 ├── LICENSE\
 └── README.md
